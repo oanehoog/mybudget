@@ -212,9 +212,9 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Spend
   </button>
-  <button class="nav-btn" onclick="showPage('accounts')" id="nav-accounts">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-    Accounts
+  <button class="nav-btn" onclick="showPage('history')" id="nav-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    History
   </button>
   <button class="nav-btn" onclick="showPage('settings')" id="nav-settings">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -310,10 +310,19 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
   <button class="fab" id="fab-add" onclick="openAddTxn()">+</button>
 </div>
 
-<!-- ==================== ACCOUNTS ==================== -->
-<div id="page-accounts" class="page">
-  <div class="page-header"><h1>Accounts</h1><p>Your banking overview</p></div>
+<!-- ==================== HISTORY ==================== -->
+<div id="page-history" class="page">
+  <div class="page-header"><h1>History</h1><p>Month-to-month comparison</p></div>
+  <div class="section" id="history-list"></div>
+</div>
+
+<!-- ==================== SETTINGS ==================== -->
+<div id="page-settings" class="page">
+  <div class="page-header"><h1>Settings</h1><p>Salary, accounts &amp; preferences</p></div>
+
+  <!-- ACCOUNTS SECTION MOVED HERE -->
   <div class="section">
+    <div class="section-title">Net Worth</div>
     <div class="card card-gold">
       <div class="nw-big" id="nw-total">R0</div>
       <div class="nw-sub">Estimated Net Worth</div>
@@ -332,14 +341,12 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
     <div class="card" id="cap-accounts"></div>
   </div>
   <div class="section" style="padding-top:0">
-    <button class="btn btn-ghost" onclick="openEditAccounts()">Edit Account Balances</button>
+    <button class="btn btn-ghost" onclick="openEditAccounts()" style="margin-bottom:0">Edit Account Balances</button>
   </div>
-</div>
 
-<!-- ==================== SETTINGS ==================== -->
-<div id="page-settings" class="page">
-  <div class="page-header"><h1>Settings</h1><p>Salary, deductions &amp; categories</p></div>
-  <div class="section">
+  <div class="divider" style="margin:8px 16px;"></div>
+
+  <div class="section" style="padding-top:8px">
     <div class="section-title">Monthly Salary</div>
     <div class="card">
       <div class="form-group">
@@ -361,7 +368,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
       <span class="section-title" style="margin-bottom:0">Recurring Transactions</span>
       <button class="btn btn-sm btn-ghost" onclick="openAddRecurring()">+ Add</button>
     </div>
-    <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Expected variable monthly costs &#8212; e.g. Netflix, gym, fuel.</p>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Expected variable monthly costs &#8212; e.g. Netflix, gym, fuel. Only rolls over at the start of a new month.</p>
     <div class="card" id="rec-list"></div>
   </div>
   <div class="section" style="padding-top:0">
@@ -547,7 +554,7 @@ const MONTHS=['January','February','March','April','May','June','July','August',
 const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 let db, currentYear, currentMonth, spendTab='all', txnType='expense';
-const PAGES=['dashboard','budget','spend','accounts','settings'];
+const PAGES=['dashboard','budget','spend','history','settings'];
 
 function cid(){return Math.random().toString(36).slice(2,9);}
 function fmt(n){return'R'+(Number(n)||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -633,10 +640,25 @@ function loadDB(){
   return defaultDB();
 }
 function saveDB(){localStorage.setItem('mybudget_v1',JSON.stringify(db));}
+
 function getMonthData(y,m){
   const k=`${y}-${String(m+1).padStart(2,'0')}`;
-  if(!db.months[k])db.months[k]={transactions:[]};
-  return db.months[k];
+  const isNew=!db.months[k];
+  if(isNew) db.months[k]={transactions:[]};
+
+  const md=db.months[k];
+
+  // Snapshot the salary the FIRST time this month is accessed while it IS
+  // the current real-world month. This means future changes to salary do
+  // not rewrite what was earned in past months.
+  const now=new Date();
+  const isRealCurrentMonth=(y===now.getFullYear()&&m===now.getMonth());
+  if(isRealCurrentMonth && !md.salarySnapshot){
+    md.salarySnapshot=db.salary;
+    if(!isNew) saveDB(); // save snapshot even on existing month
+  }
+
+  return md;
 }
 
 // ============================================================
@@ -715,6 +737,7 @@ function refreshAll(){
   renderDashboard();
   renderBudget();
   renderSpend();
+  renderHistory();
   renderAccounts();
   renderSettings();
 }
@@ -727,32 +750,39 @@ function calcMonth(y,m){
   const txns=md.transactions||[];
   const expenses=txns.filter(t=>t.type==='expense');
   const incomes=txns.filter(t=>t.type==='income');
-  const fixedTotal=db.deductions.reduce((s,d)=>s+Number(d.amount),0);
+
+  // HISTORICAL DATA PROTECTION:
+  // Fixed deductions are only counted for the CURRENT month (they represent
+  // what will go off). For past and future months we only count what was
+  // actually recorded as transactions — we never retroactively apply
+  // current deduction settings to historical data.
+  const isCurrentMonth=(y===currentYear && m===currentMonth);
+  const fixedTotal=isCurrentMonth
+    ? db.deductions.reduce((s,d)=>s+Number(d.amount),0)
+    : 0; // historical: fixed are already in transactions if they were logged
+
   const varTotal=expenses.reduce((s,t)=>s+Number(t.amount),0);
   const extraIncome=incomes.reduce((s,t)=>s+Number(t.amount),0);
   const totalOut=fixedTotal+varTotal;
-  const totalIn=db.salary+extraIncome;
+  const totalIn=(md.salarySnapshot||db.salary)+extraIncome;
   const budgetedTxns=expenses.filter(t=>t.budgeted!==false);
   const unplannedTxns=expenses.filter(t=>t.budgeted===false);
   const budgetedAmt=fixedTotal+budgetedTxns.reduce((s,t)=>s+Number(t.amount),0);
   const unplannedAmt=unplannedTxns.reduce((s,t)=>s+Number(t.amount),0);
 
-  // Spending by category
+  // Spending by category — transactions only (no phantom deduction injection)
   const catSpend={};
   db.categories.forEach(c=>catSpend[c.id]=0);
-  db.deductions.forEach(d=>{if(catSpend[d.catId]!==undefined)catSpend[d.catId]+=Number(d.amount);});
+  if(isCurrentMonth){
+    db.deductions.forEach(d=>{if(catSpend[d.catId]!==undefined)catSpend[d.catId]+=Number(d.amount);});
+  }
   expenses.forEach(t=>{if(catSpend[t.catId]!==undefined)catSpend[t.catId]+=Number(t.amount);});
 
-  // Spending by budgetItem — match by catId
+  // Spending per budget item (current month only uses deductions)
   const itemSpend={};
-  db.budgetItems.forEach(b=>itemSpend[b.id]=0);
-  // For each budget item, sum expenses in same category
-  // (simple: bucket all cat spend into items)
-  // Better: sum transactions whose catId matches the budget item's catId
   db.budgetItems.forEach(b=>{
     let s=0;
-    // include deductions in same cat
-    db.deductions.filter(d=>d.catId===b.catId).forEach(d=>s+=Number(d.amount));
+    if(isCurrentMonth) db.deductions.filter(d=>d.catId===b.catId).forEach(d=>s+=Number(d.amount));
     expenses.filter(t=>t.catId===b.catId).forEach(t=>s+=Number(t.amount));
     itemSpend[b.id]=s;
   });
@@ -1085,6 +1115,66 @@ function deleteBudgetItem(id){
   if(!confirm('Remove this budget item?'))return;
   db.budgetItems=db.budgetItems.filter(b=>b.id!==id);
   saveDB(); refreshAll(); toast('Removed');
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function renderHistory(){
+  const el=document.getElementById('history-list');
+  if(!el)return;
+
+  // Collect all month keys that have transactions or are the current month
+  const keys=Object.keys(db.months)
+    .filter(k=>db.months[k].transactions && db.months[k].transactions.length>0)
+    .sort((a,b)=>b.localeCompare(a));
+
+  if(keys.length===0){
+    el.innerHTML='<div style="text-align:center;color:var(--text-dim);padding:40px 0;font-size:13px">No history yet.<br>Start adding transactions to build your history.</div>';
+    return;
+  }
+
+  el.innerHTML=keys.map(k=>{
+    const[y,m]=k.split('-').map(Number);
+    const mo=m-1; // 0-indexed month
+    const{totalIn,totalOut,budgetedAmt,unplannedAmt}=calcMonth(y,mo);
+    const avail=totalIn-totalOut;
+    const col=avail>=0?'var(--success)':'var(--danger)';
+    const txnCount=db.months[k].transactions.length;
+    const isCurrent=y===currentYear&&mo===currentMonth;
+    return`<div style="margin-bottom:12px">
+      <div style="background:var(--card);border:1px solid ${isCurrent?'rgba(201,168,76,0.4)':' var(--border)'};border-radius:14px;padding:14px;">
+        <div class="flex-between" style="margin-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:15px;color:${isCurrent?'var(--gold)':'var(--text)'}">${MONTHS[mo]} ${y}${isCurrent?' <span style="font-size:10px;background:rgba(201,168,76,0.2);color:var(--gold);padding:2px 6px;border-radius:10px;font-weight:600">Current</span>':''}</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:2px">${txnCount} transaction${txnCount!==1?'s':''}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--text-dim)">Available</div>
+            <div style="font-size:18px;font-weight:700;color:${col}">${fmt(avail)}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;font-size:11px;text-align:center">
+          <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 4px">
+            <div style="color:var(--text-dim);margin-bottom:3px">Income</div>
+            <div style="font-weight:700;color:var(--gold)">${fmt(totalIn)}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 4px">
+            <div style="color:var(--text-dim);margin-bottom:3px">Spent</div>
+            <div style="font-weight:700;color:var(--danger)">${fmt(totalOut)}</div>
+          </div>
+          <div style="background:rgba(76,175,125,0.08);border-radius:8px;padding:8px 4px">
+            <div style="color:var(--text-dim);margin-bottom:3px">Budgeted</div>
+            <div style="font-weight:700;color:var(--success)">${fmt(budgetedAmt)}</div>
+          </div>
+          <div style="background:rgba(224,123,60,0.08);border-radius:8px;padding:8px 4px">
+            <div style="color:var(--text-dim);margin-bottom:3px">Unplanned</div>
+            <div style="font-weight:700;color:var(--warn)">${fmt(unplannedAmt)}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ============================================================
