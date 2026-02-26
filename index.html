@@ -3,7 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MyBudget">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1b2a">
+
+<!-- App Icons - generates a gold M on navy background -->
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+
+<!-- Splash screen colour -->
+<meta name="msapplication-TileColor" content="#0d1b2a">
+
 <title>MyBudget</title>
+
+<script>
+// Generate app icon as canvas and set it
+window.addEventListener('DOMContentLoaded', function() {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    // Background
+    const grad = ctx.createLinearGradient(0,0,512,512);
+    grad.addColorStop(0, '#0d1b2a');
+    grad.addColorStop(1, '#1a2d42');
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, 512, 512, 80);
+    ctx.fill();
+    // Gold ring
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.arc(256, 256, 200, 0, Math.PI * 2);
+    ctx.stroke();
+    // M letter
+    ctx.fillStyle = '#c9a84c';
+    ctx.font = 'bold 280px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('M', 256, 270);
+    const dataUrl = canvas.toDataURL('image/png');
+    // Set all icon links
+    document.querySelectorAll('link[rel="apple-touch-icon"], link[rel="icon"]').forEach(l => l.href = dataUrl);
+  } catch(e) {}
+});
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -30,7 +89,20 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     overflow-x: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Fills the status bar area at top with navy */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--navy2);
+    z-index: 999;
   }
 
   /* NAV */
@@ -60,7 +132,7 @@
   /* HEADER */
   .page-header {
     background: linear-gradient(135deg, var(--navy2), var(--navy3));
-    padding: 50px 20px 24px;
+    padding: calc(env(safe-area-inset-top) + 20px) 20px 24px;
     border-bottom: 1px solid var(--border);
   }
   .page-header h1 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); }
@@ -1200,5 +1272,65 @@ function clearAllData() {
   toast('Data cleared');
 }
 </script>
+<!-- Splash Screen -->
+<div id="splash" style="
+  position:fixed;inset:0;background:var(--navy2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:1000;transition:opacity 0.5s;
+">
+  <div style="
+    width:100px;height:100px;border-radius:24px;
+    background:linear-gradient(135deg,#0d1b2a,#1a2d42);
+    border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',serif;font-size:56px;color:var(--gold);
+    margin-bottom:24px;
+    box-shadow:0 8px 40px rgba(201,168,76,0.25);
+  ">M</div>
+  <div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--gold)">MyBudget</div>
+  <div style="color:var(--text-dim);font-size:13px;margin-top:6px">Personal Finance</div>
+  <div style="margin-top:40px;width:40px;height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+    <div id="splash-bar" style="height:100%;width:0%;background:var(--gold);border-radius:2px;transition:width 0.8s ease"></div>
+  </div>
+</div>
+
+<!-- Install Banner (shows when not in standalone mode) -->
+<div id="install-banner" style="
+  display:none;position:fixed;bottom:80px;left:16px;right:16px;
+  background:var(--navy3);border:1px solid var(--gold);
+  border-radius:14px;padding:14px 16px;z-index:90;
+  box-shadow:0 4px 24px rgba(0,0,0,0.4);
+">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-weight:600;font-size:14px;color:var(--gold)">Add to Home Screen</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:3px">Tap Share → "Add to Home Screen" for the full app experience</div>
+    </div>
+    <button onclick="document.getElementById('install-banner').style.display='none';localStorage.setItem('banner_dismissed','1')"
+      style="background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:0 0 0 12px;line-height:1">×</button>
+  </div>
+</div>
+
+<script>
+// Splash screen
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => { document.getElementById('splash-bar').style.width = '100%'; }, 100);
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    s.style.opacity = '0';
+    setTimeout(() => s.style.display = 'none', 500);
+  }, 1000);
+
+  // Show install banner if not already in standalone mode and not dismissed
+  const isStandalone = window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone && !localStorage.getItem('banner_dismissed')) {
+    setTimeout(() => {
+      document.getElementById('install-banner').style.display = 'block';
+    }, 3000);
+  }
+});
+</script>
+
 </body>
 </html>
